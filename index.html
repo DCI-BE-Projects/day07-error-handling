@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+</head>
+<body>
+    <h1>Todo List</h1>
+    <input type="text" id="todo">
+    <button type="button">Send</button>
+
+    <!-- Display the list of todos -->
+    <ul id="todos"></ul>
+
+    <script>
+        fetch('http://localhost:4000/todos')
+            .then(response => response.json())
+            .then(data => {
+                data.data.forEach(todo => {
+                    const li = document.createElement('li');
+                    li.textContent = todo.task;
+                    document.querySelector('#todos').appendChild(li);
+                });
+            })
+
+        const todo = document.querySelector('#todo');
+
+        document.querySelector('button').addEventListener('click', () => {
+            fetch('http://localhost:4000/todos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ task: todo.value })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert('Error!');
+                })
+        })
+    </script>
+</body>
+</html>
